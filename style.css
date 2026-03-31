@@ -1,0 +1,74 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* height o'rniga min-height yaxshiroq */
+    background-color: hsl(0, 0%, 95%);
+    padding: 10px; /* Telefon chetlariga yopishib qolmasligi uchun */
+}
+
+#calculator {
+    font-family: Arial, sans-serif;
+    background-color: hsl(0, 0%, 15%);
+    border-radius: 25px; /* Biroz yumshoqroq burchaklar */
+    width: 100%; /* Ekran kichik bo'lsa butun kenglikni oladi */
+    max-width: 400px; /* Kompyuterda juda katta bo'lib ketmasligi uchun chegara */
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3); /* Chiroyli ko'rinish uchun soya */
+}
+
+#display {
+    width: 100%;
+    padding: 40px 20px; /* Ichki bo'shliqni ko'paytirdik */
+    font-size: 4rem; /* Juda katta shriftni biroz kichraytirdik */
+    text-align: right; /* Kalkulyatorlarda odatda raqamlar o'ngda bo'ladi */
+    border: none;
+    background-color: hsl(0, 0%, 15%); /* Kalkulyator korpusi bilan bir xil rang */
+    color: white;
+    box-sizing: border-box; /* Padding kenglikka ta'sir qilmasligi uchun */
+    outline: none;
+}
+
+#keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 ta ustun bir xil ulushda */
+    gap: 12px; /* Tugmalar orasidagi masofa */
+    padding: 20px;
+}
+
+button {
+    width: 100%; /* Konteyner kengligiga moslashadi */
+    aspect-ratio: 1 / 1; /* Tugmalar har doim kvadrat bo'lib qoladi */
+    border-radius: 50%; /* Dumaloq shaklni saqlaydi */
+    border: none;
+    background-color: hsl(0, 0%, 30%);
+    color: white;
+    font-size: 1.8rem; /* Shriftni tugma hajmiga mosladik */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s; /* Silliq rang o'zgarishi */
+}
+
+/* Telefon uchun maxsus: barmoq bilan bosganda hover effekti o'rniga */
+button:active {
+    background-color: hsl(0, 0%, 50%);
+}
+
+.operator-btn {
+    background-color: hsl(35, 100%, 55%);
+}
+
+.operator-btn:active {
+    background-color: hsl(35, 100%, 75%);
+}
+
+/* Kichik ekranlar uchun qo'shimcha moslashuv */
+@media (max-width: 350px) {
+    #display {
+        font-size: 3rem;
+    }
+    #keys {
+        gap: 8px;
+    }
+}

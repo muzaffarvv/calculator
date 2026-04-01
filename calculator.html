@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #000;
+      padding: 10px;
+    }
+
+    .calc {
+      background: #1c1c1e;
+      border-radius: 28px;
+      width: 100%;
+      max-width: 360px;
+      overflow: hidden;
+    }
+
+    .screen {
+      padding: 28px 24px 12px;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .expr {
+      font-size: 1rem;
+      color: #888;
+      font-family: monospace;
+      min-height: 20px;
+      word-break: break-all;
+      text-align: right;
+    }
+
+    .num {
+      font-size: 3.4rem;
+      color: #fff;
+      font-weight: 300;
+      font-family: -apple-system, sans-serif;
+      letter-spacing: -2px;
+      word-break: break-all;
+      line-height: 1;
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .btn {
+      aspect-ratio: 1;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.4rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: filter 0.1s;
+      font-family: -apple-system, sans-serif;
+    }
+
+    .btn:active { filter: brightness(1.4); }
+
+    .btn-gray   { background: #636366; color: #fff; }
+    .btn-orange { background: #ff9f0a; color: #fff; }
+    .btn-dark   { background: #333335; color: #fff; }
+
+    .btn-orange.active-op { background: #fff; color: #ff9f0a; }
+
+    .btn-zero {
+      grid-column: span 2;
+      border-radius: 40px;
+      aspect-ratio: unset;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 28px;
+    }
+  </style>
+</head>
+<body>
+<div class="calc">
+  <div class="screen">
+    <div class="expr" id="expr"></div>
+    <div class="num" id="num">0</div>
+  </div>
+
+  <div class="keys" id="keys">
+    <button class="btn btn-gray"   data-action="ac">AC</button>
+    <button class="btn btn-gray"   data-action="sign">+/-</button>
+    <button class="btn btn-gray"   data-action="pct">%</button>
+    <button class="btn btn-orange" data-action="op" data-op="/">÷</button>
+
+    <button class="btn btn-dark"   data-action="num" data-val="7">7</button>
+    <button class="btn btn-dark"   data-action="num" data-val="8">8</button>
+    <button class="btn btn-dark"   data-action="num" data-val="9">9</button>
+    <button class="btn btn-orange" data-action="op" data-op="*">×</button>
+
+    <button class="btn btn-dark"   data-action="num" data-val="4">4</button>
+    <button class="btn btn-dark"   data-action="num" data-val="5">5</button>
+    <button class="btn btn-dark"   data-action="num" data-val="6">6</button>
+    <button class="btn btn-orange" data-action="op" data-op="-">−</button>
+
+    <button class="btn btn-dark"   data-action="num" data-val="1">1</button>
+    <button class="btn btn-dark"   data-action="num" data-val="2">2</button>
+    <button class="btn btn-dark"   data-action="num" data-val="3">3</button>
+    <button class="btn btn-orange" data-action="op" data-op="+">+</button>
+
+    <button class="btn btn-dark btn-zero" data-action="num" data-val="0">0</button>
+    <button class="btn btn-dark"   data-action="dot">.</button>
+    <button class="btn btn-orange" data-action="eq">=</button>
+  </div>
+</div>
+
+<script>
+  let cur = '0', prev = '', op = null, freshResult = false, justOpped = false;
+
+  const numEl  = document.getElementById('num');
+  const exprEl = document.getElementById('expr');
+
+  function fmt(val) {
+    let n = parseFloat(val);
+    if (isNaN(n)) return val;
+    if (Math.abs(n) >= 1e15 || (n !== 0 && Math.abs(n) < 1e-9))
+      return n.toExponential(6).replace(/\.?0+e/, 'e');
+    let s = parseFloat(n.toPrecision(12)).toString();
+    let parts = s.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+
+  function render() {
+    numEl.textContent = fmt(cur);
+    let size = cur.replace(/,/g, '').length;
+    numEl.style.fontSize = size > 12 ? '1.8rem' : size > 9 ? '2.4rem' : '3.4rem';
+  }
+
+  function setActiveOp(o) {
+    document.querySelectorAll('.btn-orange').forEach(b => b.classList.remove('active-op'));
+    if (o) {
+      document.querySelectorAll('[data-op]').forEach(b => {
+        if (b.dataset.op === o) b.classList.add('active-op');
+      });
+    }
+  }
+
+  function calc(a, b, o) {
+    a = parseFloat(a);
+    b = parseFloat(b);
+    if (o === '+') return a + b;
+    if (o === '-') return a - b;
+    if (o === '*') return a * b;
+    if (o === '/') return b === 0 ? 'Error' : a / b;
+  }
+
+  function opLabel(o) {
+    return { '+': '+', '-': '−', '*': '×', '/': '÷' }[o] || o;
+  }
+
+  document.getElementById('keys').addEventListener('click', e => {
+    const btn = e.target.closest('.btn');
+    if (!btn) return;
+    const { action, val, op: opVal } = btn.dataset;
+
+    if (action === 'num') {
+      if (cur === '0' || freshResult || justOpped) {
+        cur = (val === '0' && (cur === '0' || justOpped)) ? '0' : val;
+        freshResult = false;
+        justOpped = false;
+      } else {
+        if (cur.replace('-', '').replace('.', '').length >= 9) return;
+        cur += val;
+      }
+      setActiveOp(null);
+    }
+
+    else if (action === 'dot') {
+      if (freshResult || justOpped) { cur = '0.'; freshResult = false; justOpped = false; }
+      else if (!cur.includes('.')) cur += '.';
+      setActiveOp(null);
+    }
+
+    else if (action === 'ac') {
+      cur = '0'; prev = ''; op = null; freshResult = false; justOpped = false;
+      exprEl.textContent = '';
+      setActiveOp(null);
+    }
+
+    else if (action === 'sign') {
+      if (cur !== '0') cur = cur.startsWith('-') ? cur.slice(1) : '-' + cur;
+    }
+
+    else if (action === 'pct') {
+      cur = String(parseFloat(cur) / 100);
+    }
+
+    else if (action === 'op') {
+      if (op && !justOpped && !freshResult) {
+        let res = calc(prev, cur, op);
+        exprEl.textContent = fmt(prev) + ' ' + opLabel(op) + ' ' + fmt(cur) + ' =';
+        cur = String(parseFloat(res.toPrecision ? res.toPrecision(12) : res));
+        prev = cur;
+      } else {
+        prev = cur;
+      }
+      op = opVal;
+      justOpped = true;
+      freshResult = false;
+      exprEl.textContent = fmt(prev) + ' ' + opLabel(op);
+      setActiveOp(op);
+    }
+
+    else if (action === 'eq') {
+      if (!op) return;
+      exprEl.textContent = fmt(prev) + ' ' + opLabel(op) + ' ' + fmt(cur) + ' =';
+      let res = calc(prev, cur, op);
+      if (res === 'Error') {
+        cur = 'Error'; op = null;
+      } else {
+        cur = String(parseFloat(res.toPrecision ? res.toPrecision(12) : res));
+        freshResult = true;
+      }
+      op = null;
+      setActiveOp(null);
+    }
+
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

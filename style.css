@@ -1,83 +1,99 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Umumiy sozlamalar: barcha elementlardagi ortiqcha joylarni (margin/padding) nolga tenglashtiradi */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Element o'lchamini hisoblashda paddingni ichiga oladi */
+}
 
+/* Sahifa (Body): kalkulyatorni ekranning markaziga qo'yadi */
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background-color: #000;
+    min-height: 100vh; /* Ekranning to'liq balandligini egallaydi */
+    background-color: #000; /* Fon rangi qora */
     padding: 10px;
 }
 
+/* Kalkulyator korpusi (Container) */
 .calc {
-    background: #1c1c1e;
-    border-radius: 28px;
+    background: #1c1c1e; /* To'q kulrang fon */
+    border-radius: 28px; /* Burchaklarni yumaloqlash */
     width: 100%;
-    max-width: 360px;
-    overflow: hidden;
+    max-width: 360px; /* Maksimal kenglik */
+    overflow: hidden; /* Ichidagi narsalar burchakdan chiqib ketmasligi uchun */
 }
 
+/* Ekran qismi: raqamlar va amallar ko'rinadigan joy */
 .screen {
     padding: 28px 24px 12px;
     min-height: 110px;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-end;
+    flex-direction: column; /* Elementlarni ustma-ust taxlaydi */
+    justify-content: flex-end; /* Elementlarni pastga yopishtiradi */
+    align-items: flex-end; /* Elementlarni o'ngga yopishtiradi */
     gap: 6px;
 }
 
+/* Yuqoridagi kichik yozuv (hisob-kitob tarixi uchun) */
 .expr {
     font-size: 1rem;
-    color: #888;
+    color: #888; /* Kulrang matn */
     font-family: monospace;
     min-height: 20px;
-    word-break: break-all;
+    word-break: break-all; /* Matn sig'masa pastga tushiradi */
     text-align: right;
 }
 
+/* Asosiy katta raqamlar ekrani */
 .num {
     font-size: 3.4rem;
-    color: #fff;
+    color: #fff; /* Oq matn */
     font-weight: 300;
     font-family: -apple-system, sans-serif;
-    letter-spacing: -2px;
+    letter-spacing: -2px; /* Harflar orasidagi masofani qisqartiradi */
     word-break: break-all;
     line-height: 1;
 }
 
+/* Tugmalar joylashuvi (Grid mantiqi) */
 .keys {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr); /* 4 ta teng ustun yaratadi */
+    gap: 10px; /* Tugmalar orasidagi masofa */
     padding: 16px;
 }
 
+/* Umumiy tugma stili */
 .btn {
-    aspect-ratio: 1;
+    aspect-ratio: 1; /* Tugmani kvadrat yoki aylana shaklida saqlaydi */
     border: none;
-    border-radius: 50%;
+    border-radius: 50%; /* Tugmalarni dumaloq qiladi */
     font-size: 1.4rem;
     font-weight: 500;
     cursor: pointer;
-    transition: filter 0.1s;
+    transition: filter 0.1s; /* Bosilgandagi effekt tezligi */
     font-family: -apple-system, sans-serif;
 }
 
+/* Tugma bosilganda yorqinlikni oshirish (aktiv holat) */
 .btn:active { filter: brightness(1.4); }
 
-.btn-gray   { background: #636366; color: #fff; }
-.btn-orange { background: #ff9f0a; color: #fff; }
-.btn-dark   { background: #333335; color: #fff; }
+/* Tugmalarning ranglari */
+.btn-gray   { background: #636366; color: #fff; } /* Funksional tugmalar uchun */
+.btn-orange { background: #ff9f0a; color: #fff; } /* Operatorlar (+, -, *, /) uchun */
+.btn-dark   { background: #333335; color: #fff; } /* Raqamlar uchun */
 
+/* Faol operator effekti (masalan, + bosilganda rangi teskari bo'ladi) */
 .btn-orange.active-op { background: #fff; color: #ff9f0a; }
 
+/* "0" tugmasi uchun maxsus stil */
 .btn-zero {
-    grid-column: span 2;
-    border-radius: 40px;
-    aspect-ratio: unset;
+    grid-column: span 2; /* Ikkita ustun joyini egallaydi */
+    border-radius: 40px; /* Dumaloq emas, oval ko'rinish beradi */
+    aspect-ratio: unset; /* Balandlik va kenglik nisbatini bekor qiladi */
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start; /* Nolni chaproqqa suradi */
     padding-left: 28px;
 }

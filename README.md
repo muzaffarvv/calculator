@@ -1,4 +1,4 @@
-## 🧩 Technologies Used
+**🧩 Technologies Used**
 
 * **HTML5** – Provides the structure and semantic layout of the application
 * **CSS3** – Handles styling, animations, and responsive design using Flexbox & Grid

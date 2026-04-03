@@ -20,6 +20,6 @@
    cd calculator
    ```
 
-3. Open `index.html` in your browser
+3. **Open `index.html` in your browser**
 
 ---
